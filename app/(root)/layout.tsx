@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import LeftSidebar from "@/components/shared/LeftSidebar";
 import RightSidebar from "@/components/shared/RightSidebar";
-import Navbar from "@/components/navbar/Navbar";
+import Navbar from "@/components/shared/navbar/Navbar";
 
 export default function RootLayout({
   children,
