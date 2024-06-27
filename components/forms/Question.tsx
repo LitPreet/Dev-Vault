@@ -20,9 +20,14 @@ import { useTheme } from "next-themes";
 import { Editor } from "@tinymce/tinymce-react";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "../ui/button";
+import { createQuestion } from "@/lib/actions/question.action";
 
-const Question = () => {
-    const type = 'Editd'
+interface Props {
+  mongoUserId: string;
+}
+
+const Question = ({ mongoUserId }: Props) => {
+  const type = "Editd";
   const editorRef = useRef(null);
   const { resolvedTheme } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,15 +42,19 @@ const Question = () => {
       tags: [],
     },
   });
-  function onSubmit(values: z.infer<typeof QuestionsSchema>) {
-  setIsSubmitting(true);
-    try{
-
-    }
-    catch(err){
-
-    } finally{
-        setIsSubmitting(false)
+  async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
+    setIsSubmitting(true);
+    try {
+      await createQuestion({
+        title: values.title,
+        content: values.explanation,
+        tags: values.tags,
+        author: JSON.parse(mongoUserId),
+      });
+      router.push('/')
+    } catch (err) {
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -126,7 +135,7 @@ const Question = () => {
                   }
                   initialValue={" "}
                   onBlur={field.onBlur}
-                  //   onEditorChange={(content) => field.onChange(content)}
+                  onEditorChange={(content) => field.onChange(content)}
                   init={{
                     height: 350,
                     menubar: false,
@@ -191,11 +200,11 @@ const Question = () => {
                           className="subtle-medium background-light800_dark300
                         text-light400_light500 flex items-center justify-center gap-2 rounded-md px-4 py-2 capitalize selection:border-none "
                           onClick={() => handleTagRemove(tag, field)}
-                            // onClick={() =>
-                            //   type !== "Edit"
-                            //     ? handleTagRemove(tag, field)
-                            //     : () => {}
-                            // }
+                          // onClick={() =>
+                          //   type !== "Edit"
+                          //     ? handleTagRemove(tag, field)
+                          //     : () => {}
+                          // }
                         >
                           {tag}
                           {/* {type !== "Edit" && ( */}
@@ -206,7 +215,7 @@ const Question = () => {
                             height={12}
                             className="cursor-pointer object-contain invert-0 dark:invert"
                           />
-                     {/* )}  */}
+                          {/* )}  */}
                         </Badge>
                       ))}
                     </div>
@@ -221,16 +230,12 @@ const Question = () => {
             </FormItem>
           )}
         />
-         <Button
+        <Button
           type="submit"
           className="primary-gradient w-fit !text-light-900"
           disabled={isSubmitting}
         >
-          {isSubmitting ? (
-            <>{"Posting..."}</>
-          ) : (
-            <>{"Ask a Question "}</>
-          )}
+          {isSubmitting ? <>{"Posting..."}</> : <>{"Ask a Question "}</>}
         </Button>
       </form>
     </Form>
