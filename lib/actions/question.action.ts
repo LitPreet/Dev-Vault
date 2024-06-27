@@ -6,8 +6,67 @@ import Tag from "@/database/tag.model";
 import Interaction from "@/database/interaction.model";
 import User from "@/database/user.model";
 import { revalidatePath } from "next/cache";
+import {  CreateQuestionParams, GetQuestionsParams } from "./shared.types";
+import { FilterQuery } from "mongoose";
 
-export async function createQuestion(params: any) {
+export async function getQuestions(params: GetQuestionsParams){
+    try {
+        connectToDatabase();
+    
+        const { searchQuery, filter, page = 1, pageSize = 20 } = params;
+    
+        // calculate the number of posts to skip based on the page number and page size
+        const skipAmount = (page - 1) * pageSize;
+    
+        const query: FilterQuery<typeof Question> = {};
+    
+        if (searchQuery) {
+          query.$or = [
+            {
+              title: { $regex: new RegExp(searchQuery, "i") },
+            },
+            {
+              content: { $regex: new RegExp(searchQuery, "i") },
+            },
+          ];
+        }
+    
+        let sortOptions = {};
+    
+        switch (filter) {
+          case "newest":
+            sortOptions = { createdAt: -1 };
+            break;
+          case "frequent":
+            sortOptions = { views: -1 };
+            break;
+          case "unanswered":
+            query.answers = { $size: 0 };
+            break;
+          default:
+            break;
+        }
+    
+        const totalQuestions = await Question.countDocuments(query);
+    
+        const questions = await Question.find(query)
+          .populate({ path: "tags", model: Tag }) // we have id of the tag, this is to get the tag's name i.e it's value.
+          .populate({ path: "author", model: User })
+          .skip(skipAmount)
+          .limit(pageSize)
+          .sort(sortOptions);
+    
+        const isNext = totalQuestions > skipAmount + questions.length;
+    
+        return { questions, isNext };
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+}
+
+
+export async function createQuestion(params: CreateQuestionParams) {
     //eslint-disable-next-line no-empty
     try {
         //connect to db

@@ -8,6 +8,9 @@ import { SearchParamsProps } from "@/types/index";
 import type { Metadata } from "next";
 import Link from "next/link";
 import NoResult from "@/components/shared/NoResult";
+import { getQuestions } from "@/lib/actions/question.action";
+import QuestionCard from "@/components/cards/QuestionCard";
+import Pagination from "@/components/shared/Pagination";
 
 export const metadata: Metadata = {
   title: "Home | DevOverFlow",
@@ -16,7 +19,12 @@ export const metadata: Metadata = {
 export default async function Home({ searchParams }: SearchParamsProps) {
   // const { userId } = auth();
 
-  // let result;
+  let result;
+  result = await getQuestions({
+        searchQuery: searchParams.q,
+        filter: searchParams.filter,
+        page: searchParams.page ? +searchParams.page : 1,
+      });
 
   // if (searchParams?.filter === "recommended") {
   //   if (userId) {
@@ -68,7 +76,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 
       <HomeFilters />
 
-      {/* <div className="mt-10 flex w-full flex-col gap-6">
+      <div className="mt-10 flex w-full flex-col gap-6">
         {result.questions.length > 0 ? (
           result.questions.map((question) => (
             <QuestionCard
@@ -97,7 +105,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
           pageNumber={searchParams?.page ? +searchParams.page : 1}
           isNext={result.isNext}
         />
-      </div> */}
+      </div>
     </>
   );
 }
