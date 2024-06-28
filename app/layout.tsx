@@ -20,9 +20,9 @@ export const metadata: Metadata = {
   title: "Dev Vault",
   description:
     "DevVault is a vibrant community where anyone can ask and answer questions related to programming. Whether you're a beginner or an expert, share your knowledge, solve problems, and learn together in a collaborative environment. Welcome to the ultimate destination for all things coding!",
-    icons:{
-      icon: "/assets/images/site-logo.svg",
-    }
+  icons: {
+    icon: "/assets/images/site-logo.svg",
+  },
 };
 
 export default function RootLayout({
@@ -31,19 +31,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body  className={`${inter.variable} ${spaceGrotesk.variable} custom-scrollbar`}>
-        <ClerkProvider
-          appearance={{
-            elements: {
-              formButtonPrimary: "primary-gradient",
-              footerActionLink: "primary-text-gradient hover:text-primary-500",
-            },
-          }}
+    <ClerkProvider
+      appearance={{
+        elements: {
+          formButtonPrimary: "primary-gradient",
+          footerActionLink: "primary-text-gradient hover:text-primary-500",
+        },
+      }}
+    >
+      <html lang="en">
+        <body
+          className={`${inter.variable} ${spaceGrotesk.variable} custom-scrollbar`}
         >
           <ThemeProviders>{children}</ThemeProviders>
-        </ClerkProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
