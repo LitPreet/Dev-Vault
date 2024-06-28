@@ -9,9 +9,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const getTimeStamp = (createdAt: Date): string => {
+  const createdAtDate = typeof createdAt === 'string' ? new Date(createdAt) : createdAt;
   const now = new Date();
   const diffInSeconds: number = Math.floor(
-    (now.getTime() - createdAt.getTime()) / 1000
+    (now.getTime() - createdAtDate.getTime()) / 1000
   );
 
   if (diffInSeconds < 60) {
