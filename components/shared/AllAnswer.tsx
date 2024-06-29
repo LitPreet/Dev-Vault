@@ -7,6 +7,7 @@ import { getTimeStamp } from "@/lib/utils";
 import ParseHTML from "./ParseHTML";
 // import Votes from "./Votes";
 import Pagination from "./Pagination";
+import Votes from "./Votes";
 
 interface Props {
   questionId: string;
@@ -69,7 +70,7 @@ const AllAnswers = async ({
                   </Link>
                 </div>
                 <div className="flex ">
-                  {/* <Votes
+                  <Votes
                     type="Answer"
                     itemId={JSON.stringify(answer._id)}
                     userId={JSON.stringify(user)}
@@ -77,7 +78,7 @@ const AllAnswers = async ({
                     hasUpvoted={answer.upvotes.includes(user)}
                     downvotes={answer.downvotes.length}
                     hasDownvoted={answer.downvotes.includes(user)}
-                  /> */}
+                  />
                 </div>
               </div>
               <ParseHTML data={answer.content} />

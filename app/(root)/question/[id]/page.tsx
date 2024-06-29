@@ -10,6 +10,7 @@ import Link from "next/link";
 import ParseHTML from "@/components/shared/ParseHTML";
 import Answer from "@/components/forms/Answer";
 import AllAnswers from "@/components/shared/AllAnswer";
+import Votes from "@/components/shared/Votes";
 
 const Page = async ({ params, searchParams }: any) => {
   const result = await getQuestionById({ questionId: params.id });
@@ -21,7 +22,7 @@ const Page = async ({ params, searchParams }: any) => {
   if (clerkId) {
     mongoUser = await getUserById({ userId: clerkId });
   }
-
+  console.log(result.upvotes.includes(mongoUser._id),'jsj')
   return (
     <>
       <div className="flex-start w-full flex-col">
@@ -41,7 +42,7 @@ const Page = async ({ params, searchParams }: any) => {
               {result.author.name}
             </p>
           </Link>
-          {/* <div className="flex justify-end max-sm:justify-start">
+          <div className="flex justify-end max-sm:justify-start">
             <Votes
               type="Question"
               itemId={JSON.stringify(result._id)}
@@ -52,7 +53,7 @@ const Page = async ({ params, searchParams }: any) => {
               hasDownvoted={result.downvotes.includes(mongoUser._id)}
               hasSaved={mongoUser?.saved.includes(result._id)}
             />
-          </div> */}
+          </div>
         </div>
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
           {result.title}
