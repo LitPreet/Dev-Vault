@@ -6,7 +6,7 @@ import Tag from "@/database/tag.model";
 import Interaction from "@/database/interaction.model";
 import User from "@/database/user.model";
 import { revalidatePath } from "next/cache";
-import {  CreateQuestionParams, GetQuestionsParams } from "./shared.types";
+import {  CreateQuestionParams, GetQuestionByIdParams, GetQuestionsParams } from "./shared.types";
 import { FilterQuery } from "mongoose";
 
 export async function getQuestions(params: GetQuestionsParams){
@@ -116,4 +116,25 @@ export async function createQuestion(params: CreateQuestionParams) {
     } catch (err) {
 
     }
+}
+
+export async function getQuestionById(params: GetQuestionByIdParams) {
+  try {
+    connectToDatabase();
+
+    const { questionId } = params;
+
+    const question = await Question.findById(questionId)
+      .populate({ path: "tags", model: Tag, select: "_id name" })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id name clerkId picture",
+      });
+
+    return question;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 }
