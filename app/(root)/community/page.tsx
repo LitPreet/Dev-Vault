@@ -9,7 +9,7 @@ import { getAllUsers } from "@/lib/actions/user.action";
 import UserCard from "@/components/cards/UserCard";
 
 export const metadata: Metadata = {
-  title: "Community | DevOverFlow",
+  title: "Community | Dev Vault",
 };
 
 const Page = async ({ searchParams }: SearchParamsProps) => {

@@ -5,6 +5,7 @@ import Metric from "../shared/Metric";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import { SignedIn } from "@clerk/nextjs";
 import RenderTags from "../shared/RenderTags";
+import EditDeleteAction from "../shared/EditDeleteAction";
 // import EditDeleteAction from "../shared/EditDeleteAction";
 
 interface Props {
@@ -38,7 +39,6 @@ const QuestionCard = ({
   answers,
 }: Props) => {
   const showActionButtons = clerkId && clerkId === author.clerkId;
-
   return (
     <div className="card-wrapper mt-4 rounded-[10px] p-9 xs:mt-2 sm:px-11">
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row  ">
@@ -53,11 +53,11 @@ const QuestionCard = ({
           </Link>
         </div>
 
-        {/* <SignedIn>
+        <SignedIn>
           {showActionButtons && (
             <EditDeleteAction type="Question" itemId={JSON.stringify(_id)} />
           )}
-        </SignedIn> */}
+        </SignedIn>
       </div>
       <div className="mt-3.5 flex flex-wrap gap-2 ">
         {tags.map((tag) => (

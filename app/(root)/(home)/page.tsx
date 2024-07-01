@@ -13,7 +13,7 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import Pagination from "@/components/shared/Pagination";
 
 export const metadata: Metadata = {
-  title: "Home | DevOverFlow",
+  title: "Home | Dev Vault",
 };
 
 export default async function Home({ searchParams }: SearchParamsProps) {

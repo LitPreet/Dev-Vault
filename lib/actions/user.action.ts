@@ -1,11 +1,14 @@
 "use server"
 import User from "@/database/user.model";
 import { connectToDatabase } from "../mongoose"
-import { CreateUserParams, DeleteUserParams, GetAllUsersParams, UpdateUserParams, ToggleSaveQuestionParams,GetSavedQuestionsParams } from "./shared.types";
+import { CreateUserParams, DeleteUserParams, GetAllUsersParams, UpdateUserParams, ToggleSaveQuestionParams, GetSavedQuestionsParams, GetUserStatsParams, GetUserByIdParams } from "./shared.types";
 import Question from "@/database/question.model";
 import { FilterQuery } from "mongoose";
 import { revalidatePath } from "next/cache";
 import Tag from "@/database/tag.model";
+import Answer from "@/database/answer.model";
+import { assignBadges } from "../utils";
+import { BadgeCriteriaType } from "@/types";
 
 export async function getUserById(params: any) {
   try {
@@ -232,6 +235,155 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
     const savedQuestions = user.saved;
 
     return { questions: savedQuestions, isNext };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getUserQuestions(params: GetUserStatsParams) {
+  try {
+    connectToDatabase();
+
+    const { userId, page = 1, pageSize = 10 } = params;
+
+    const skipAmount = (page - 1) * pageSize;
+
+    const totalQuestions = await Question.countDocuments({ author: userId });
+
+    const userQuestions = await Question.find({ author: userId })
+      .sort({
+        createdAt: -1,
+        views: -1,
+        upvotes: -1,
+      })
+      .populate("tags", "_id name")
+      .populate("author", "_id clerkId name picture")
+      .skip(skipAmount)
+      .limit(pageSize);
+
+    const isNext = totalQuestions > skipAmount + userQuestions.length;
+
+    return { totalQuestions, questions: userQuestions, isNext };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getUserAnswers(params: GetUserStatsParams) {
+  try {
+    connectToDatabase();
+
+    const { userId, page = 1, pageSize = 10 } = params;
+
+    const skipAmount = (page - 1) * pageSize;
+
+    const totalAnswers = await Answer.countDocuments({ author: userId });
+
+    const userAnswers = await Answer.find({ author: userId })
+      .sort({
+        upvotes: -1,
+      })
+      .populate("question", "_id title")
+      .populate("author", "_id clerkId name picture")
+      .skip(skipAmount)
+      .limit(pageSize);
+
+    const isNext = totalAnswers > skipAmount + userAnswers.length;
+
+    return { totalAnswers, answers: userAnswers, isNext };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getUserInfo(params: GetUserByIdParams) {
+  try {
+    connectToDatabase();
+
+    const { userId } = params;
+
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const totalQuestions = await Question.countDocuments({ author: user._id });
+    const totalAnswers = await Answer.countDocuments({
+      author: user._id,
+    });
+
+    const [questionUpvotes] = await Question.aggregate([
+      { $match: { author: user._id } },
+      {
+        $project: {
+          _id: 0,
+          upvotes: { $size: "$upvotes" },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" },
+        },
+      },
+    ]);
+
+    const [answerUpvotes] = await Answer.aggregate([
+      { $match: { author: user._id } },
+      {
+        $project: {
+          _id: 0,
+          upvotes: { $size: "$upvotes" },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" },
+        },
+      },
+    ]);
+
+    const [questionViews] = await Question.aggregate([
+      { $match: { author: user._id } },
+      {
+        $group: {
+          _id: null,
+          totalViews: { $sum: "$views" },
+        },
+      },
+    ]);
+
+    const criteria = [
+      {
+        type: "QUESTION_COUNT" as BadgeCriteriaType,
+        count: totalQuestions,
+      },
+      {
+        type: "ANSWER_COUNT" as BadgeCriteriaType,
+        count: totalAnswers,
+      },
+      {
+        type: "QUESTION_UPVOTES" as BadgeCriteriaType,
+        count: questionUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "ANSWER_UPVOTES" as BadgeCriteriaType,
+        count: answerUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "TOTAL_VIEWS" as BadgeCriteriaType,
+        count: questionViews?.totalViews || 0,
+      },
+    ];
+
+    const badgeCounts = assignBadges({ criteria });
+
+    return { user, totalQuestions, totalAnswers, badgeCounts };
   } catch (error) {
     console.log(error);
     throw error;

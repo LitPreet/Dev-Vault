@@ -8,8 +8,6 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 import { SignedOut, useAuth } from "@clerk/nextjs";
 
-
-
 const LeftSidebar = () => {
   const { userId } = useAuth();
   const pathname = usePathname();
@@ -21,14 +19,13 @@ const LeftSidebar = () => {
           const isActive =
             (pathname.includes(item.route) && item.route.length > 1) ||
             pathname === item.route;
-
-          // if (item.route === "/profile") {
-          //   if (userId) {
-          //     item.route = `${item.route}/${userId}`;
-          //   } else {
-          //     return null;
-          //   }
-          // }
+          if (item.route === "/profile") {
+            if (userId) {
+              item.route = `${item.route}/${userId}`;
+            } else {
+              return null;
+            }
+          }
 
           return (
             <Link
