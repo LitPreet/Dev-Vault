@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { getTimeStamp } from "@/lib/utils";
 import ParseHTML from "./ParseHTML";
-// import Votes from "./Votes";
 import Pagination from "./Pagination";
 import Votes from "./Votes";
 

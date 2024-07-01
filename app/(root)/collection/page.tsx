@@ -10,7 +10,7 @@ import { auth } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Saved Questions | DevOverFlow",
+  title: "Saved Questions | Dev Vault",
 };
 
 export default async function Home({ searchParams }: SearchParamsProps) {

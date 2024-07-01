@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 import { getAllTags } from "@/lib/actions/tag.actions";
 
 export const metadata: Metadata = {
-  title: "Tags | Dev Vault",
+  title: "Tags | DevVault",
 };
 
 const Page = async ({ searchParams }: SearchParamsProps) => {

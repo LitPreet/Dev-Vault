@@ -7,7 +7,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { sidebarLinks } from "@/constants";
-// import { SignedOut } from "@clerk/nextjs";
+import { SignedOut } from "@clerk/nextjs";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -77,7 +77,7 @@ const MobileNav = () => {
             <NavContent />
           </SheetClose>
 
-          {/* <SignedOut> */}
+          <SignedOut>
             <div className="flex flex-col gap-3">
               <SheetClose asChild>
                 <Link href="/sign-in">
@@ -98,7 +98,7 @@ const MobileNav = () => {
                 </Link>
               </SheetClose>
             </div>
-          {/* </SignedOut> */}
+          </SignedOut>
         </div>
       </SheetContent>
     </Sheet>

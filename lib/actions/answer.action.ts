@@ -122,6 +122,7 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
     }
 
     // Increment author's reputation:
+    
 
     // upvoting or revoking an upvote:
     await User.findByIdAndUpdate(userId, {
