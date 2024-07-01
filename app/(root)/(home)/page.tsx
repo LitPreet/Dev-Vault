@@ -94,7 +94,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
         ) : (
           <NoResult
             title="There are no questions to show."
-            description="Be the first to break the silence, 🚀 Ask a question and kickstart the discussion. Our Query could be the next big thing others learn from. Get invloved! 💡"
+            description="Jumpstart the conversation! 🚀 Ask a question and ignite the discussion. Your curiosity could inspire others. Join the conversation now!💡"
             link="/ask-question"
             linkTitle="Ask a Question"
           />

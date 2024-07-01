@@ -6,17 +6,50 @@ import { GetTopInteractedTagsParams,GetQuestionsByTagIdParams,GetAllTagsParams} 
 import { FilterQuery } from "mongoose";
 import Tag, { ITag } from "@/database/tag.model";
 import Question from "@/database/question.model";
+import Interaction from "@/database/interaction.model";
 
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
-    try {
-        connectToDatabase()
-        const { userId, limit = 3 } = params;
-        const user = await User.findById(userId);
-        if (!user) throw new Error("No user found")
-        return [{ _id: '1', name: 'tag1' }, { _id: '2', name: 'tag2' }, { _id: '3', name: 'tag3' }]
-    } catch (err) {
-        console.log(err)
+  try {
+    connectToDatabase();
+
+    const { userId } = params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error("User not found");
     }
+
+    const userInteractions = await Interaction.find({ user: user._id })
+      .populate("tags")
+      .exec();
+
+    const userTags = userInteractions.reduce((tags, interaction) => {
+      if (interaction.tags) {
+        tags = tags.concat(interaction.tags);
+      }
+      return tags;
+    }, []);
+
+    // Count the occurrences of each tag
+    const tagCountMap = userTags.reduce((countMap: any, tag: any) => {
+      countMap.set(tag, (countMap.get(tag) || 0) + 1);
+      return countMap;
+    }, new Map());
+
+    // Sort tags based on count in descending order
+    const sortedTags = Array.from(tagCountMap.entries()).sort(
+      (a: any, b: any) => b[1] - a[1]
+    );
+
+    // Get the top 3 tags
+    const top3Tags = sortedTags.slice(0, 3).map((tag: any) => tag[0]);
+
+    return top3Tags;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 }
 
 export async function getAllTags(params: GetAllTagsParams) {

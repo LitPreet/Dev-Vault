@@ -20,10 +20,10 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "Dev Vault",
   description:
-    "DevVault is a vibrant community where anyone can ask and answer questions related to programming. Whether you're a beginner or an expert, share your knowledge, solve problems, and learn together in a collaborative environment. Welcome to the ultimate destination for all things coding!",
-  icons: {
-    icon: "/assets/images/site-logo.svg",
-  },
+    "Dev Vault is a vibrant community where anyone can ask and answer questions related to programming. Whether you're a beginner or an expert, share your knowledge, solve problems, and learn together in a collaborative environment. Welcome to the ultimate destination for all things coding!",
+  // icons: {
+  //   icon: "assets/images/auth-dark.png",
+  // },
 };
 
 export default function RootLayout({
@@ -41,6 +41,9 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
+        <head>
+        <link rel="icon" href="/assets/images/site-logo.svg" />
+        </head>
         <body
           className={`${inter.variable} ${spaceGrotesk.variable} custom-scrollbar`}
         >
