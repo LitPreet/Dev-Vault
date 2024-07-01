@@ -4,11 +4,14 @@ import LocalSearch from "@/components/shared/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import { SearchParamsProps } from "@/types/index";
-// import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 import Link from "next/link";
 import NoResult from "@/components/shared/NoResult";
-import { getQuestions } from "@/lib/actions/question.action";
+import {
+  getQuestions,
+  getRecommendedQuestions,
+} from "@/lib/actions/question.action";
 import QuestionCard from "@/components/cards/QuestionCard";
 import Pagination from "@/components/shared/Pagination";
 
@@ -17,35 +20,35 @@ export const metadata: Metadata = {
 };
 
 export default async function Home({ searchParams }: SearchParamsProps) {
-  // const { userId } = auth();
+  const { userId } = auth();
 
   let result;
   result = await getQuestions({
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
+    page: searchParams.page ? +searchParams.page : 1,
+  });
+
+  if (searchParams?.filter === "recommended") {
+    if (userId) {
+      result = await getRecommendedQuestions({
+        userId,
         searchQuery: searchParams.q,
-        filter: searchParams.filter,
         page: searchParams.page ? +searchParams.page : 1,
       });
-
-  // if (searchParams?.filter === "recommended") {
-  //   if (userId) {
-  //     result = await getRecommendedQuestions({
-  //       userId,
-  //       searchQuery: searchParams.q,
-  //       page: searchParams.page ? +searchParams.page : 1,
-  //     });
-  //   } else {
-  //     result = {
-  //       questions: [],
-  //       isNext: false,
-  //     };
-  //   }
-  // } else {
-  //   result = await getQuestions({
-  //     searchQuery: searchParams.q,
-  //     filter: searchParams.filter,
-  //     page: searchParams.page ? +searchParams.page : 1,
-  //   });
-  // }
+    } else {
+      result = {
+        questions: [],
+        isNext: false,
+      };
+    }
+  } else {
+    result = await getQuestions({
+      searchQuery: searchParams.q,
+      filter: searchParams.filter,
+      page: searchParams.page ? +searchParams.page : 1,
+    });
+  }
 
   return (
     <>
@@ -58,7 +61,6 @@ export default async function Home({ searchParams }: SearchParamsProps) {
           </Button>
         </Link>
       </div>
-
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
           route="/"
@@ -73,9 +75,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
           containerClasses="hidden max-md:flex"
         />
       </div>
-
       <HomeFilters />
-
       <div className="mt-10 flex w-full flex-col gap-6">
         {result.questions.length > 0 ? (
           result.questions.map((question) => (
@@ -104,8 +104,8 @@ export default async function Home({ searchParams }: SearchParamsProps) {
         <Pagination
           pageNumber={searchParams?.page ? +searchParams.page : 1}
           isNext={result.isNext}
-        />
-      </div>
+          />
+          </div>
     </>
   );
 }
