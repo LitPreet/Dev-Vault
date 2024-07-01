@@ -63,6 +63,14 @@ export async function getAllTags(params: GetAllTagsParams) {
         .skip(skipAmount)
         .limit(pageSize);
   
+        // const transformedTags = tags.map(tag => {
+        //   const { _id, __v, ...rest } = tag.toObject();
+        //   return {
+        //     ...rest,
+        //     _id: _id.toString(),
+        //   };
+        // });
+    
       const isNext = totalTags > skipAmount + tags.length;
   
       return { tags, isNext };
