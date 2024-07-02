@@ -56,7 +56,7 @@ const Page = async ({ searchParams }: Props) => {
       </div>
 
       <section className="light-border mb-9 mt-11 flex flex-col gap-9 border-b pb-9">
-        {jobs.length > 0 ? (
+        {jobs && jobs.length > 0 ? (
           jobs.map((job: Job) => {
             if (job.job_title && job.job_title.toLowerCase() !== "undefined")
               return <JobCard key={job.id} job={job} />;
@@ -71,7 +71,7 @@ const Page = async ({ searchParams }: Props) => {
         )}
       </section>
 
-      {jobs.length > 0 && (
+      {jobs && jobs.length > 0 && (
         <Pagination pageNumber={page} isNext={jobs.length === 10} />
       )}
     </>
