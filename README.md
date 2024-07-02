@@ -1,6 +1,6 @@
 
 # Dev Vault
-
+<img src="https://github.com/LitPreet/Dev-Vault/blob/master/public/assets/images/pic2.png" />
 Dev Vault is an advanced Q&A platform built with Next.js 14, tailored to meet the needs of developers. This application serves as a vibrant community where developers of all experience levels can ask questions, share knowledge, and collaborate effectively. Designed to facilitate seamless interaction, Dev Vault aims to enhance learning and problem-solving among developers.
 
 ## 🌐Demo
